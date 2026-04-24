@@ -1,0 +1,35 @@
+import streamlit as st
+import speech_recognition as sr
+from pydub import AudioSegment
+
+recognizer = sr.Recognizer()
+
+st.title("Speech Processing Application - Developed by Faizan Maqsood")
+
+st.sidebar.title("About")
+st.sidebar.write("Developer: Faizan Maqsood")
+
+uploaded_file = st.file_uploader("Upload Audio File", type=["wav", "mp3"])
+
+if uploaded_file is not None:
+    
+    with open("input_audio", "wb") as f:
+        f.write(uploaded_file.read())
+
+    audio = AudioSegment.from_file("input_audio")
+    audio.export("temp.wav", format="wav")
+
+    st.success("Audio Loaded Successfully")
+
+    with sr.AudioFile("temp.wav") as source:
+        audio_data = recognizer.record(source)
+
+    try:
+        text = recognizer.recognize_google(audio_data)
+        st.subheader("Recognized Text:")
+        st.write(text)
+    except:
+        st.error("Could not recognize speech")
+
+st.markdown("---")
+st.write("Developed by: Faizan Maqsood")
