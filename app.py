@@ -1,35 +1,28 @@
 import streamlit as st
 import speech_recognition as sr
-from pydub import AudioSegment
 
-recognizer = sr.Recognizer()
+st.title("🎤 Speech to Text App")
 
-st.title("Speech Processing Application - Developed by Faizan Maqsood")
+st.write("Upload an audio file (WAV format) and get text output.")
 
-st.sidebar.title("About")
-st.sidebar.write("Developer: Faizan Maqsood")
+audio_file = st.file_uploader("Upload Audio File", type=["wav"])
 
-uploaded_file = st.file_uploader("Upload Audio File", type=["wav", "mp3"])
+if audio_file is not None:
+    recognizer = sr.Recognizer()
 
-if uploaded_file is not None:
-    
-    with open("input_audio", "wb") as f:
-        f.write(uploaded_file.read())
+    with open("temp.wav", "wb") as f:
+        f.write(audio_file.read())
 
-    audio = AudioSegment.from_file("input_audio")
-    audio.export("temp.wav", format="wav")
+    audio = sr.AudioFile("temp.wav")
 
-    st.success("Audio Loaded Successfully")
-
-    with sr.AudioFile("temp.wav") as source:
+    with audio as source:
         audio_data = recognizer.record(source)
 
     try:
         text = recognizer.recognize_google(audio_data)
-        st.subheader("Recognized Text:")
+        st.success("Transcription:")
         st.write(text)
-    except:
-        st.error("Could not recognize speech")
-
-st.markdown("---")
-st.write("Developed by: Faizan Maqsood")
+    except sr.UnknownValueError:
+        st.error("Could not understand audio")
+    except sr.RequestError:
+        st.error("API error. Check internet connection.")
