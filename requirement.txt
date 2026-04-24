@@ -1,9 +1,2 @@
 streamlit
-speechrecognition
-pydub
-ffmpeg-python
-streamlit
-SpeechRecognition
-streamlit
-SpeechRecognition
-pyaudio
+SpeechRecognition==3.10.0
